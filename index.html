@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Login UT</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="login-wrapper">
+  <div class="login-card">
+    
+    <h2>📚 Bahan Ajar SITTA UT</h2>
+    <p class="subtitle">Silakan login untuk melanjutkan</p>
+
+    <div class="input-group">
+      <input type="email" id="email" required>
+      <label>Email</label>
+    </div>
+
+    <div class="input-group">
+      <input type="password" id="password" required>
+      <label>Password</label>
+      <span class="toggle" onclick="togglePassword()">👁️</span>
+    </div>
+
+    <button onclick="login()" class="btn-login">Login</button>
+
+    <div class="extra">
+      <a href="#" onclick="openModal('forgotModal')">Lupa Password</a>
+      <a href="#" onclick="openModal('registerModal')">Daftar</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="forgotModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('forgotModal')">&times;</span>
+    <h3>Lupa Password</h3>
+    <p>Fitur ini hanya simulasi</p>
+  </div>
+</div>
+
+<div id="registerModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('registerModal')">&times;</span>
+    <h3>Daftar</h3>
+    <input type="email" placeholder="Email">
+    <input type="password" placeholder="Password">
+    <button>Daftar</button>
+  </div>
+</div>
+
+<script src="data.js"></script>
+
+<script>
+// LOGIN
+function login() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) {
+    alert("Email dan password wajib diisi!");
+    return;
+  }
+
+  const user = dataPengguna.find(u =>
+    u.email === email && u.password === password
+  );
+
+  if (user) {
+    localStorage.setItem("userLogin", JSON.stringify(user));
+    alert("Login berhasil! Selamat datang " + user.nama);
+    window.location.href = "dashboard.html";
+  } else {
+    alert("Email atau password salah!");
+  }
+}
+
+// SHOW PASSWORD
+function togglePassword() {
+  const pass = document.getElementById("password");
+  pass.type = pass.type === "password" ? "text" : "password";
+}
+
+// MODAL
+function openModal(id) {
+  document.getElementById(id).style.display = "block";
+}
+
+function closeModal(id) {
+  document.getElementById(id).style.display = "none";
+}
+
+// ENTER = LOGIN
+document.addEventListener("keypress", function(e) {
+  if (e.key === "Enter") {
+    login();
+  }
+});
+</script>
+
+</body>
+</html>
