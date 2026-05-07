@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Tracking Pengiriman</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Tracking Pengiriman Bahan Ajar</h2>
+
+  <input type="text" id="no_do" placeholder="Masukkan Nomor DO">
+  <button onclick="cari()">Cari</button>
+
+  <p id="errorMsg" class="error"></p>
+
+  <div id="result" class="result">
+
+    <p><strong>Nama:</strong> <span id="nama"></span></p>
+    <p><strong>Ekspedisi:</strong> <span id="ekspedisi"></span></p>
+    <p><strong>Tanggal Kirim:</strong> <span id="tanggal"></span></p>
+    <p><strong>Paket:</strong> <span id="paket"></span></p>
+    <p><strong>Total:</strong> <span id="total"></span></p>
+
+    <p><strong>Status:</strong> <span id="status"></span></p>
+
+    <!-- Progress -->
+    <div class="progress">
+      <div id="progressBar" class="progress-bar">0%</div>
+    </div>
+
+    <h3>Riwayat Pengiriman</h3>
+    <div id="timeline"></div>
+
+  </div>
+</div>
+
+<!-- DATA -->
+<script src="data.js"></script>
+
+<script>
+function cari() {
+  const input = document.getElementById("no_do").value.trim();
+  const resultBox = document.getElementById("result");
+  const errorMsg = document.getElementById("errorMsg");
+
+  errorMsg.innerText = "";
+  resultBox.style.display = "none";
+
+  if (!input) {
+    errorMsg.innerText = "Nomor DO wajib diisi!";
+    return;
+  }
+
+  const data = dataTracking[input];
+
+  if (!data) {
+    errorMsg.innerText = "Nomor DO tidak ditemukan!";
+    return;
+  }
+
+  resultBox.style.display = "block";
+
+  document.getElementById("nama").innerText = data.nama;
+  document.getElementById("ekspedisi").innerText = data.ekspedisi;
+
+  document.getElementById("tanggal").innerText =
+    new Date(data.tanggalKirim).toLocaleDateString("id-ID");
+
+  const barang = dataBahanAjar.find(b => b.kodeLokasi === data.paket);
+
+  document.getElementById("paket").innerText =
+    data.paket + " (" + (barang ? barang.namaBarang : "-") + ")";
+
+  document.getElementById("total").innerText = data.total;
+  document.getElementById("status").innerText = data.status;
+
+  // Progress
+  let progress = 0;
+  let warna = "gray";
+
+  if (data.status === "Diproses") {
+    progress = 25;
+    warna = "orange";
+  } else if (data.status === "Dalam Perjalanan") {
+    progress = 75;
+    warna = "blue";
+  } else if (data.status === "Selesai") {
+    progress = 100;
+    warna = "green";
+  }
+
+  const bar = document.getElementById("progressBar");
+  bar.style.width = progress + "%";
+  bar.innerText = data.status + " (" + progress + "%)";
+  bar.style.backgroundColor = warna;
+
+  // Timeline
+  let html = "";
+
+  data.perjalanan.forEach(item => {
+    html += `
+      <div class="timeline-item">
+        <p><strong>${item.waktu}</strong></p>
+        <p>${item.keterangan}</p>
+      </div>
+    `;
+  });
+
+  document.getElementById("timeline").innerHTML = html;
+}
+
+// ENTER
+document.addEventListener("keypress", function(e) {
+  if (e.key === "Enter") {
+    cari();
+  }
+});
+</script>
+
+</body>
+</html>
