@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard UT</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="dashboard-wrapper">
+  <div class="dashboard-card">
+
+    <h2 id="greeting"></h2>
+    <p id="welcome"></p>
+
+    <div class="menu">
+      <button onclick="goTo('informasi.html')">📚 Informasi Bahan Ajar</button>
+      <button onclick="goTo('tracking.html')">🚚 Tracking Pengiriman</button>
+      <button onclick="goTo('stok.html')">📦 Stok Bahan Ajar</button>
+    </div>
+
+    <button class="logout" onclick="logout()">Logout</button>
+
+  </div>
+</div>
+
+<script>
+// ================= CEK LOGIN =================
+const user = JSON.parse(localStorage.getItem("userLogin"));
+
+if (!user) {
+  alert("Silakan login terlebih dahulu!");
+  window.location.href = "login.html";
+}
+
+// ================= NAVIGASI =================
+function goTo(page) {
+  window.location.href = page;
+}
+
+// ================= LOGOUT =================
+function logout() {
+  localStorage.removeItem("userLogin");
+  window.location.href = "login.html";
+}
+
+// ================= GREETING =================
+function setGreeting() {
+  const hour = new Date().getHours();
+  let greeting = "";
+
+  if (hour >= 5 && hour < 12) {
+    greeting = "Selamat Pagi 🌅";
+  } else if (hour >= 12 && hour < 15) {
+    greeting = "Selamat Siang ☀️";
+  } else if (hour >= 15 && hour < 18) {
+    greeting = "Selamat Sore 🌇";
+  } else {
+    greeting = "Selamat Malam 🌙";
+  }
+
+  document.getElementById("greeting").innerText =
+    greeting + ", " + user.nama;
+
+  document.getElementById("welcome").innerText =
+    "Role: " + user.role + " | Lokasi: " + user.lokasi;
+}
+
+setGreeting();
+</script>
+
+</body>
+</html>
